@@ -424,20 +424,22 @@ var LEVELS = (function() {
         return qs;
     }
 
-    // Level 6: Black Spider-Man - Multiplication
+    // Level 6: Black Spider-Man - Read the word, pick the picture
     function genLevel6() {
         var qs = [];
-        for (var i = 0; i < 5; i++) {
-            var a = 1 + Math.floor(Math.random() * 5); // 1-5
-            var b = 1 + Math.floor(Math.random() * 5); // 1-5
+        var pool = shuffle(WORD_PICTURES).slice(0, 5);
+        pool.forEach(function(item) {
+            var wrongEmojis = WORD_PICTURES.filter(function(w) { return w.word !== item.word; });
+            var options = shuffle(wrongEmojis).slice(0, 2).map(function(w) { return w.emoji; });
+            options.push(item.emoji);
             qs.push({
-                type: 'multiply',
-                prompt: a + ' x ' + b + ' = ?',
-                displayA: a,
-                displayB: b,
-                target: a * b
+                type: 'wordpic',
+                prompt: 'Find: ' + item.word,
+                displayWord: item.word,
+                target: item.emoji,
+                choices: shuffle(options)
             });
-        }
+        });
         return qs;
     }
 
@@ -543,7 +545,7 @@ var LEVELS = (function() {
                 '<div style="position:absolute;top:30%;right:35%;animation:float 1.6s infinite;">' + shadowSVG(45) + '</div>' +
                 '<div style="position:absolute;top:12%;right:55%;animation:float 1.4s infinite;">' + shadowSVG(50) + '</div>' +
                 '<div style="position:absolute;bottom:30%;left:5%;animation:fadeIn 0.8s;">' +
-                    '<div class="speech-bubble" style="font-size:22px;">Shadows incoming!<br>Time to multiply!</div>' +
+                    '<div class="speech-bubble" style="font-size:22px;">Shadows incoming!<br>Read the words!</div>' +
                 '</div>' +
             '</div>' +
         '</div>';

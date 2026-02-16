@@ -60,7 +60,7 @@ var AUDIO_TEXTS = {
   "tree": "Tree",
 
   // Level 6 - Multiplication
-  "multiply": "Multiply!",
+  "find_the_picture": "Find the picture!",
 
   // Level 7 - Spelling
   "spell_the_word": "Spell the word!",

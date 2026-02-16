@@ -145,7 +145,7 @@
     function buildVisual(q) {
         if(q.type==='count'){var items='';for(var i=0;i<q.n;i++){if(q.kind==='goblin')items+='<div class="count-item">'+goblinSVG(50)+'</div>';else items+='<span class="count-item" style="font-size:48px;">\uD83D\uDD77\uFE0F</span>';}return '<div class="counting-grid">'+items+'</div>';}
         if(q.type==='color')return '<div style="width:80px;height:80px;border-radius:50%;background:'+q.displayColor+';border:4px solid rgba(0,0,0,0.3);margin:8px auto;"></div>';
-        if(q.type==='wordpic')return '<div style="font-size:80px;margin:8px 0;">'+q.displayEmoji+'</div>';
+        if(q.type==='wordpic'){if(q.displayEmoji)return '<div style="font-size:80px;margin:8px 0;">'+q.displayEmoji+'</div>';if(q.displayWord)return '<div style="font-size:56px;font-weight:bold;margin:8px 0;text-shadow:2px 2px 4px rgba(0,0,0,0.3);">'+q.displayWord+'</div>';}
         return '';
     }
 

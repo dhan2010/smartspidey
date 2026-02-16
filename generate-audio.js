@@ -66,8 +66,8 @@ const TEXTS = {
   star: "Star",
   tree: "Tree",
 
-  // Level 6 - Multiplication
-  multiply: "Multiply!",
+  // Level 6 - Word reading
+  find_the_picture: "Find the picture!",
 
   // Level 7 - Spelling 3-letter words
   spell_the_word: "Spell the word!",
