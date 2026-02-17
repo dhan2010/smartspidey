@@ -129,7 +129,7 @@
     function render(html){game.innerHTML=html;game.onclick=function(){initAudio();game.onclick=null;};}
 
     // ===== GENERATORS =====
-    function genLevel1(){var qs=[];qs.push({type:'find',prompt:'Tap the letter A!',target:'A',choices:shuffle(['A','B','D','R'])});qs.push({type:'find',prompt:'Tap the letter M!',target:'M',choices:shuffle(['M','N','W','K'])});qs.push({type:'find',prompt:'Tap the letter S!',target:'S',choices:shuffle(['S','Z','C','G'])});var nl=playerName.split('');var all='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');var extra=all.filter(function(l){return nl.indexOf(l)===-1;}).slice(0,3);qs.push({type:'spell',prompt:'Spell your name: '+playerName+'!',target:nl,pool:shuffle(nl.concat(extra))});qs.push({type:'spell',prompt:'Spell MAMA!',target:['M','A','M','A'],pool:shuffle(['M','A','M','A','N','O','P'])});return qs;}
+    function genLevel1(){var qs=[];var lp=[{t:'A',d:['B','D','R']},{t:'B',d:['D','P','R']},{t:'C',d:['G','O','Q']},{t:'D',d:['B','P','O']},{t:'E',d:['F','B','D']},{t:'M',d:['N','W','K']},{t:'O',d:['Q','D','C']},{t:'S',d:['Z','C','G']},{t:'T',d:['I','L','F']},{t:'P',d:['B','D','R']},{t:'K',d:['X','Y','H']},{t:'R',d:['P','B','D']}];var picked=shuffle(lp).slice(0,6);picked.forEach(function(item){qs.push({type:'find',prompt:'Tap the letter '+item.t+'!',target:item.t,choices:shuffle([item.t].concat(item.d))});});var nl=playerName.split('');var all='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');var extra=all.filter(function(l){return nl.indexOf(l)===-1;}).slice(0,3);qs.push({type:'spell',prompt:'Spell your name: '+playerName+'!',target:nl,pool:shuffle(nl.concat(extra))});qs.push({type:'spell',prompt:'Spell MAMA!',target:['M','A','M','A'],pool:shuffle(['M','A','M','A','N','O','P'])});return qs;}
     function genLevel2(){var qs=[];var c1=2+Math.floor(Math.random()*4);qs.push({type:'count',prompt:'How many goblins?',target:c1,n:c1,kind:'goblin'});var c2=2+Math.floor(Math.random()*4);qs.push({type:'count',prompt:'How many spiders?',target:c2,n:c2,kind:'spider'});for(var i=0;i<3;i++){var a=1+Math.floor(Math.random()*9);var b=1+Math.floor(Math.random()*9);qs.push({type:'add',prompt:a+' + '+b+' = ?',target:a+b});}return qs;}
     function generateQuestions(level){if(level===1)return genLevel1();if(level===2)return genLevel2();return LEVELS.generators[level]();}
 
@@ -144,8 +144,8 @@
 
     function buildVisual(q) {
         if(q.type==='count'){var items='';for(var i=0;i<q.n;i++){if(q.kind==='goblin')items+='<div class="count-item">'+goblinSVG(50)+'</div>';else items+='<span class="count-item" style="font-size:48px;">\uD83D\uDD77\uFE0F</span>';}return '<div class="counting-grid">'+items+'</div>';}
-        if(q.type==='color')return '<div style="width:80px;height:80px;border-radius:50%;background:'+q.displayColor+';border:4px solid rgba(0,0,0,0.3);margin:8px auto;"></div>';
-        if(q.type==='wordpic'){if(q.displayEmoji)return '<div style="font-size:80px;margin:8px 0;">'+q.displayEmoji+'</div>';if(q.displayWord)return '<div style="font-size:56px;font-weight:bold;margin:8px 0;text-shadow:2px 2px 4px rgba(0,0,0,0.3);">'+q.displayWord+'</div>';}
+        if(q.type==='color')return '<div style="text-align:center;margin:8px auto;"><div style="width:60px;height:60px;border-radius:50%;background:'+q.displayColor+';border:3px solid rgba(0,0,0,0.3);margin:0 auto 8px;"></div><div style="font-size:48px;font-weight:bold;color:'+q.displayColor+';text-shadow:2px 2px 4px rgba(0,0,0,0.3);letter-spacing:3px;">'+q.target+'</div></div>';
+        if(q.type==='wordpic'){return '<div style="font-size:56px;font-weight:bold;margin:8px 0;color:white;text-shadow:3px 3px 6px rgba(0,0,0,0.4);">'+q.displayWord+'</div>';}
         return '';
     }
 
@@ -156,9 +156,11 @@
         var visual=buildVisual(q);
         var choices=q.choices||genChoices(q.target);
         var btns='';
-        choices.forEach(function(c){var s=String(c);var fs=s.length<=2?'48px':(s.length<=5?'32px':'24px');btns+='<button class="btn btn-answer" style="font-size:'+fs+';min-width:100px;min-height:100px;animation:fadeIn 0.5s;" data-v="'+s+'">'+s+'</button>';});
+        if(q.colorChoices){q.colorChoices.forEach(function(c){btns+='<button class="btn btn-answer" style="min-width:100px;min-height:100px;animation:fadeIn 0.5s;padding:12px;" data-v="'+c.name+'"><div style="width:60px;height:60px;border-radius:50%;background:'+c.hex+';border:3px solid rgba(0,0,0,0.3);margin:0 auto;"></div></button>';});}
+        else if(q.emojiChoices){q.emojiChoices.forEach(function(c){btns+='<button class="btn btn-answer" style="font-size:56px;min-width:100px;min-height:100px;animation:fadeIn 0.5s;" data-v="'+c.emoji+'">'+c.emoji+'</button>';});}
+        else{choices.forEach(function(c){var s=String(c);var fs=s.length<=2?'48px':(s.length<=5?'32px':'24px');btns+='<button class="btn btn-answer" style="font-size:'+fs+';min-width:100px;min-height:100px;animation:fadeIn 0.5s;" data-v="'+s+'">'+s+'</button>';});}
         render('<div style="position:absolute;top:0;left:0;width:100%;height:100%;background:'+cfg.bg+';"><div class="screen-top"><div class="progress-bar" style="margin-top:20px;"><div class="progress-fill" style="width:'+pct+'%"></div></div><div class="stars">'+starsHTML(levelQuestions.length,currentQuestion)+'</div><div style="margin:6px 0;">'+ch+'</div><div class="speech-bubble" style="font-size:28px;animation:fadeIn 0.3s;">'+q.prompt+'</div>'+visual+'<div class="answers-grid" style="margin-top:12px;" id="grid">'+btns+'</div></div></div>');
-        if(!muted)speakText(q.prompt);
+        if(!muted){if(q.speakWord)speakText(q.speakWord);else speakText(q.prompt);}
         document.getElementById('grid').addEventListener('click',function(e){
             var b=e.target.closest('.btn-answer');if(!b||b.classList.contains('correct'))return;
             var val=b.getAttribute('data-v');

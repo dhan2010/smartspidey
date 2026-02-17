@@ -368,21 +368,23 @@ var LEVELS = (function() {
 
     // ==================== QUESTION GENERATORS ====================
 
-    // Level 3: Hulk - Identify colors
+    // Level 3: Hulk - Identify colors (voice + name + color swatches)
     function genLevel3() {
         var qs = [];
         var pool = shuffle(COLORS).slice(0, 5);
         pool.forEach(function(color) {
             var wrongColors = COLORS.filter(function(c) { return c.name !== color.name; });
-            var options = shuffle(wrongColors).slice(0, 3).map(function(c) { return c.name; });
-            options.push(color.name);
+            var picked = shuffle(wrongColors).slice(0, 3);
+            picked.push(color);
+            var shuffled = shuffle(picked);
             qs.push({
                 type: 'color',
-                prompt: 'What color is this?',
+                prompt: 'Find this color!',
                 displayColor: color.hex,
-                displayEmoji: color.emoji,
                 target: color.name,
-                choices: shuffle(options)
+                speakWord: color.name,
+                choices: shuffled.map(function(c) { return c.name; }),
+                colorChoices: shuffled
             });
         });
         return qs;
@@ -405,39 +407,45 @@ var LEVELS = (function() {
         return qs;
     }
 
-    // Level 5: Captain America - Match words to pictures
+    // Level 5: Captain America - Voice + word + pick matching emoji
     function genLevel5() {
         var qs = [];
         var pool = shuffle(WORD_PICTURES).slice(0, 5);
         pool.forEach(function(item) {
-            var wrongWords = WORD_PICTURES.filter(function(w) { return w.word !== item.word; });
-            var options = shuffle(wrongWords).slice(0, 2).map(function(w) { return w.word; });
-            options.push(item.word);
+            var wrongItems = WORD_PICTURES.filter(function(w) { return w.word !== item.word; });
+            var picked = shuffle(wrongItems).slice(0, 2);
+            picked.push(item);
+            var shuffled = shuffle(picked);
             qs.push({
                 type: 'wordpic',
-                prompt: 'What is this?',
-                displayEmoji: item.emoji,
-                target: item.word,
-                choices: shuffle(options)
+                prompt: 'Find it!',
+                displayWord: item.word,
+                target: item.emoji,
+                speakWord: item.word,
+                choices: shuffled.map(function(w) { return w.emoji; }),
+                emojiChoices: shuffled
             });
         });
         return qs;
     }
 
-    // Level 6: Black Spider-Man - Read the word, pick the picture
+    // Level 6: Black Spider-Man - Voice + word + pick matching emoji (4 choices)
     function genLevel6() {
         var qs = [];
         var pool = shuffle(WORD_PICTURES).slice(0, 5);
         pool.forEach(function(item) {
-            var wrongEmojis = WORD_PICTURES.filter(function(w) { return w.word !== item.word; });
-            var options = shuffle(wrongEmojis).slice(0, 2).map(function(w) { return w.emoji; });
-            options.push(item.emoji);
+            var wrongItems = WORD_PICTURES.filter(function(w) { return w.word !== item.word; });
+            var picked = shuffle(wrongItems).slice(0, 3);
+            picked.push(item);
+            var shuffled = shuffle(picked);
             qs.push({
                 type: 'wordpic',
-                prompt: 'Find: ' + item.word,
+                prompt: 'Find it!',
                 displayWord: item.word,
                 target: item.emoji,
-                choices: shuffle(options)
+                speakWord: item.word,
+                choices: shuffled.map(function(w) { return w.emoji; }),
+                emojiChoices: shuffled
             });
         });
         return qs;
